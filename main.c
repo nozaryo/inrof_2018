@@ -1,10 +1,13 @@
 #define F_CPU 8000000UL
 
+#define step_num 200
+
 #include<avr/io.h>
 #include<util/delay.h>
 #include <avr/interrupt.h>
 
 int timer = 0;
+int steper1[3]
 
 ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 	timer ++;
