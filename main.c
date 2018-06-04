@@ -6,9 +6,9 @@
 
 int timer = 0;
 
-ISR(TIMER2_COMPB_vect){
+ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 	timer ++;
-	if(timer>=999){
+	if(timer>=1000){
 		PORTC ^= (1 << PC6);
 		timer=0;
 	}
@@ -21,15 +21,15 @@ int main(void){
 
 	DDRC |= (1 << PC6);
 	PORTC |= (1 << PC6);
-
-    while(1){
-    }
+  while(1){
+  }
 }
 
 int init(){
-	TCCR2B = 3;
-	OCR2B = 125;
-	TIMSK2 = 0b00000100;
+	TCCR2A = 0b00000011;
+	TCCR2B = 0b00001011;
+	OCR2A = 250;
+	TIMSK2 = 0b00000010;
 	sei();
 	return 0;
 }
