@@ -20,6 +20,7 @@ ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 		timer=0;
 	}
 }
+
 int init();
 int set_stepper_step(int x,int y,int num);
 int set_stepper_speed(int x,int y,int num);
