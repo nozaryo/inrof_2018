@@ -123,30 +123,17 @@ int stepper_LOW(int x,int y){
 }
 
 int stepper_dir(int x,int y,bool dir){
-	x=0;
-	y+=1;
-	if(dir == 1){
 
-		if(y == 1){
-			PORTC |= 0b00000100;
-		}else if(y == 2){
-			PORTC |= 0b00010000;
-		}else if(y == 3){
-			PORTC |= 0b01000000;
+	  if(0<=x && x<=2 && 0<=y && y<=2){
+		if(dir == 1){
+			y+=1;
+			PORTC |= (1 << 2*y);
+		  return 1;
+		}else if(dir == 0){
+			y+=1;
+			PORTC &= ~(1 << 2*y);
+			return 1;
 		}
-	  return 1;
-
-	}else if(dir == 0){
-
-		if(y == 1){
-			PORTC &= 0b11111011;
-		}else if(y == 2){
-			PORTC &= 0b11101111;
-		}else if(y == 3){
-			PORTC &= 0b10111111;
-		}
-		return 1;
-
 	}
 
 	return 0;
