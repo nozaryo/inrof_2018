@@ -15,26 +15,26 @@ int stepper_dir(int x,int y,bool dir);// 1:front 0:back
 
 
 int timer[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-int stepper[3][3][2]={{{0,0},{0,0},{0,0}},//{steps,speed}
-									    {{0,0},{0,0},{0,0}},
-										  {{0,0},{0,0},{0,0}}};
+int stepper[3][3][2]={{{0,20},{0,20},{0,20}},//{steps,speed}
+									    {{0,20},{0,20},{0,20}},
+										  {{0,20},{0,20},{0,20}}};
 										 //if steps == 0 && speed == 0 stop
 										 //if steps == 0 && speed != 0 infinty spin
 int steps[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
 
 ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 	int i,j;
-	for(i=0;i<3;i++){
+	for(i=0;i<1;i++){
 		for(j=0;j<3;j++){
 			if(stepper[i][j][0]==0 && stepper[i][j][1]==0){
 
 			}else if(stepper[i][j][0]==0 && stepper[i][j][1] > 0){
-				stepper_dir(i,j,1);
+				//stepper_dir(i,j,1);
 				timer[i][j]++;
 				if(timer[i][j]==stepper[i][j][1]){
 					stepper_HIGH(i,j);
 					timer[i][j]=0;
-				}else if(timer[i][j]==0){
+				}else if(timer[i][j]==1){
 					stepper_LOW(i,j);
 				}
 			}else if(stepper[i][j][0]==0 && stepper[i][j][1] < 0){
@@ -43,7 +43,7 @@ ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 				if(timer[i][j]==stepper[i][j][1]){
 					stepper_HIGH(i,j);
 					timer[i][j]=0;
-				}else if(timer[i][j]==0){
+				}else if(timer[i][j]==1){
 					stepper_LOW(i,j);
 				}
 			}
@@ -67,6 +67,7 @@ int init(){
 	TIMSK2 = 0b00000010;
 	DDRC = 0b11111111;
 	DDRA = 0b11111111;
+	PORTC = 0b10101000;
 	sei();
 	return 0;
 }
@@ -90,21 +91,33 @@ int set_stepper_speed(int x,int y,int num){
 }
 
 int stepper_HIGH(int x,int y){
-	if(x < 2 && y < 3){
-		PORTC |= (1 << (3*x+y) );
-		return 1;
-	}else{
-		return 0;
+	x=0;
+	if(y < 3){
+		y+=2;
+		if(x == 0){
+			PORTC |= (1 << (2*y-1));
+			return 1;
+		}else{
+			return 0;
+		}
 	}
+
+	return 0;
 }
 
 int stepper_LOW(int x,int y){
-	if(x < 2 && y < 3){
-		PORTC &= ~(1 << (3*x+y) );
-		return 1;
-	}else{
-		return 0;
+	x=0;
+	if(y < 3){
+		y+=2;
+		if(x == 0){
+			PORTC &= ~(1 << (2*y-1));
+			return 1;
+		}else{
+			return 0;
+		}
 	}
+
+	return 0;
 }
 
 int stepper_dir(int x,int y,bool dir){
@@ -120,6 +133,6 @@ int stepper_dir(int x,int y,bool dir){
 		}
 	}
 
-	return 0;
+	return 1;
 
 }
