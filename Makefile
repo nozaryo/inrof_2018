@@ -5,7 +5,7 @@ CFLAGS = -mmcu=$(DEVICE) -Os
 LDFLAFGS =
 PORT = /dev/ttyUSB0
 LFUSE = 0b11100010
-HFUSE = 0b10011001
+HFUSE = 0b11011001
 
 %.o: %.c
 	avr-g++ $(CFLAGS) $^ -o $@
