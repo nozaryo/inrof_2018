@@ -68,7 +68,9 @@ int init(){
 	OCR2A = 250;
 	TIMSK2 = 0b00000010;
 	DDRC |= 0b11111111;
+	DDRD |= 0b11111111;
 	PORTC |= 0b01010100;
+	PORTD |= 0b01010100;
 	//DDRA = 0b11111111;
 
 	sei();
@@ -101,7 +103,7 @@ int stepper_HIGH(int x,int y){
 		PORTC |= (1 << (2*y-1));
 		return 1;
 	}else if(x == 1){
-		PORTB |= (1 << (2*y-1));
+		PORTD |= (1 << (2*y-1));
 		return 1;
 	}else{
 		return 0;
@@ -117,7 +119,7 @@ int stepper_LOW(int x,int y){
 		PORTC &= ~(1 << (2*y-1));
 		return 1;
 	}else if(x == 1){
-		PORTB &= ~(1 << (2*y-1));
+		PORTD &= ~(1 << (2*y-1));
 		return 1;
 	}else{
 		return 0;
@@ -141,11 +143,11 @@ int stepper_dir(int x,int y,bool dir){
 			}else if(x == 1){
 				if(dir == 1){
 					y+=1;
-					PORTB |= (1 << 2*y);
+					PORTD |= (1 << 2*y);
 				  return 1;
 				}else if(dir == 0){
 					y+=1;
-					PORTB &= ~(1 << 2*y);
+					PORTD &= ~(1 << 2*y);
 					return 1;
 				}
 			}
