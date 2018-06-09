@@ -7,45 +7,42 @@
 #include <avr/interrupt.h>
 
 int init();
-int set_stepper_step(int x,int y,int num);
-int set_stepper_speed(int x,int y,int num);
-int stepper_HIGH(int x,int y);
-int stepper_LOW(int x,int y);
-int stepper_dir(int x,int y,bool dir);// 1:front 0:back
+int set_stepper_step(int x,int num);
+int set_stepper_speed(int x,int num);
+int stepper_HIGH(int x);
+int stepper_LOW(int x);
+int stepper_dir(int x,bool dir);// 1:front 0:back
 
 
-int timer[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
-int stepper[3][3][2]={{{0,0},{0,20},{0,0}},//{steps,speed}
-									    {{0,50},{0,50},{0,50}},
-										  {{0,50},{0,50},{0,50}}};
+int timer[3] = {0,0,0};
+int stepper[3][2]={{0,0},{0,20},{0,0}};//{steps,speed}
 										 //if steps == 0 && speed == 0 stop
 										 //if steps == 0 && speed != 0 infinty spin
-int steps[3][3] = {{0,0,0},{0,0,0},{0,0,0}};
+int steps[3] = {0,0,0};
 
 ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
-	int i,j;
-	i=0;
+	int i;
 
-	for(j=0;j<3;j++){
-		if(stepper[i][j][0]==0 && stepper[i][j][1]==0){
+	for(i=0;i<3;i++){
+		if(stepper[i][0]==0 && stepper[i][1]==0){
 
-		}else if(stepper[i][j][0]==0 && stepper[i][j][1] > 0){
-			stepper_dir(i,j,1);
-			timer[i][j]++;
-			if(timer[i][j]>=stepper[i][j][1]){
-				stepper_HIGH(i,j);
-				timer[i][j]=0;
-			}else if(timer[i][j]==1){
-				stepper_LOW(i,j);
+		}else if(stepper[i][0]==0 && stepper[i][1] > 0){
+			stepper_dir(i,1);
+			timer[i]++;
+			if(timer[i]>=stepper[i][1]){
+				stepper_HIGH(i);
+				timer[i]=0;
+			}else if(timer[i]==1){
+				stepper_LOW(i);
 			}
-		}else if(stepper[i][j][0]==0 && stepper[i][j][1] < 0){
-			stepper_dir(i,j,0);
-			timer[i][j]++;
-			if(timer[i][j]>=(stepper[i][j][1]*(-1))){
-				stepper_HIGH(i,j);
-				timer[i][j]=0;
-			}else if(timer[i][j]==1){
-				stepper_LOW(i,j);
+		}else if(stepper[i][0]==0 && stepper[i][1] < 0){
+			stepper_dir(i,0);
+			timer[i]++;
+			if(timer[i]>=(stepper[i][1]*(-1))){
+				stepper_HIGH(i);
+				timer[i]=0;
+			}else if(timer[i]==1){
+				stepper_LOW(i);
 			}
 		}
 
@@ -75,45 +72,28 @@ int init(){
 	return 0;
 }
 
-int set_stepper_step(int x,int y,int num){
-	if(x<3 && y<3){
-		stepper[x][y][0] = num;
+int set_stepper_step(int x,int num){
+	if(x<3){
+		stepper[x][0] = num;
 		return 1;
 	}else{
 		return 0;
 	}
 }
 
-int set_stepper_speed(int x,int y,int num){
-	if(x<3 && y<3){
-		stepper[x][y][1] = num;
+int set_stepper_speed(int x,int num){
+	if(x<3){
+		stepper[x][1] = num;
 		return 1;
 	}else{
 		return 0;
 	}
 }
 
-int stepper_HIGH(int x,int y){
-	x=0;
-
-	y+=2;
-	if(x == 0){
-		PORTC |= (1 << (2*y-1));
-		return 1;
-	}else{
-		return 0;
-	}
-
-
-	return 0;
-}
-
-int stepper_LOW(int x,int y){
-	x=0;
-
-	y+=2;
-	if(x == 0){
-		PORTC &= ~(1 << (2*y-1));
+int stepper_HIGH(int x){
+	x+=2;
+	if(2<=x && x<=4){
+		PORTC |= (1 << (2*x-1));
 		return 1;
 	}else{
 		return 0;
@@ -122,16 +102,28 @@ int stepper_LOW(int x,int y){
 	return 0;
 }
 
-int stepper_dir(int x,int y,bool dir){
+int stepper_LOW(int x){
+	x+=2;
+	if(2<=x && x<=4){
+		PORTC &= ~(1 << (2*x-1));
+		return 1;
+	}else{
+		return 0;
+	}
 
-	  if(0<=x && x<=2 && 0<=y && y<=2){
+	return 0;
+}
+
+int stepper_dir(int x,bool dir){
+
+	 if(0<=x && x<=2){
 		if(dir == 1){
-			y+=1;
-			PORTC |= (1 << 2*y);
+			x+=1;
+			PORTC |= (1 << 2*x);
 		  return 1;
 		}else if(dir == 0){
-			y+=1;
-			PORTC &= ~(1 << 2*y);
+			x+=1;
+			PORTC &= ~(1 << 2*x);
 			return 1;
 		}
 	}
