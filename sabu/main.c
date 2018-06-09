@@ -47,6 +47,34 @@ ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 				}else if(timer[i][j]==1){
 					stepper_LOW(i,j);
 				}
+			}else if(stepper[i][j][0]>0 && stepper[i][j][1] > 0){
+				stepper_dir(i,j,1);
+				timer[i][j]++;
+				if(timer[i][j]>=stepper[i][j][1]){
+					stepper_HIGH(i,j);
+					timer[i][j]=0;
+				}else if(timer[i][j]==1){
+					stepper_LOW(i,j);
+					if(stepper[i][j][0]==1){
+						stepper[i][j][0] = 0;
+						stepper[i][j][1] = 0;
+					}
+					stepper[i][j][0]--;
+				}
+			}else if(stepper[i][j][0]>0 && stepper[i][j][1] < 0){
+				stepper_dir(i,j,0);
+				timer[i][j]++;
+				if(timer[i][j]>=stepper[i][j][1]){
+					stepper_HIGH(i,j);
+					timer[i][j]=0;
+				}else if(timer[i][j]==1){
+					stepper_LOW(i,j);
+					if(stepper[i][j][0]==1){
+						stepper[i][j][0] = 0;
+						stepper[i][j][1] = 0;
+					}
+					stepper[i][j][0]--;
+				}
 			}
 		}
 	}
