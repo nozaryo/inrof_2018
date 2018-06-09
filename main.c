@@ -1,6 +1,10 @@
 #define F_CPU 8000000UL
 
 #define step_num 200
+#define free_angleA 75
+#define free_angleB 30
+
+
 
 #include<avr/io.h>
 #include<util/delay.h>
@@ -15,7 +19,7 @@ int stepper_dir(int x,bool dir);// 1:front 0:back
 
 
 int timer[3] = {0,0,0};
-int stepper[3][2]={{0,0},{0,20},{0,0}};//{steps,speed}
+int stepper[3][2]={{0,60},{0,60},{0,60}};//{steps,speed}
 										 //if steps == 0 && speed == 0 stop
 										 //if steps == 0 && speed != 0 infinty spin
 int steps[3] = {0,0,0};
@@ -78,9 +82,7 @@ ISR(TIMER2_COMPA_vect){//1ms毎に割り込み
 
 
 int main(void){
-
 	init();
-
   while(1){
 
   }
@@ -94,9 +96,8 @@ int init(){
 	TCCR1A = 0b10100010;
 	TCCR1B = 0b00011100;
 	ICR1 = 625;
-	OCR1A = 0;
-	OCR1B = 0;
 	DDRC |= 0b11111111;
+	DDRD |= 0b00110000;
 	PORTC |= 0b01010100;
 	//DDRA = 0b11111111;
 
@@ -148,7 +149,7 @@ int stepper_LOW(int x){
 
 int stepper_dir(int x,bool dir){
 
-	 if(0<=x && x<=2){
+	if(-1<x && x<3){
 		if(dir == 1){
 			x+=1;
 			PORTC |= (1 << 2*x);

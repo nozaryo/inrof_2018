@@ -15,8 +15,8 @@ int stepper_dir(int x,int y,bool dir);// 1:front 0:back
 
 
 int timer[2][3] = {{0,0,0},{0,0,0}};
-int stepper[2][3][2]={{{0,0},{0,20},{0,0}},//{steps,speed}
-									    {{0,50},{0,50},{0,50}}};
+int stepper[2][3][2]={{{0,0},{0,50},{0,0}},//{steps,speed}
+									    {{0,0},{0,50},{0,0}}};
 										 //if steps == 0 && speed == 0 stop
 										 //if steps == 0 && speed != 0 infinty spin
 int steps[2][3] = {{0,0,0},{0,0,0}};
@@ -86,7 +86,6 @@ int main(void){
 	init();
 
   while(1){
-
   }
 }
 
